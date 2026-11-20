@@ -1,8 +1,8 @@
-import { NextAuthResult } from "next-auth";
+"use client";
+
 import { signOut as clientSignOut } from "next-auth/react";
 
-export * from "next-auth/react";
-export type { NextAuthResult };
+export { SessionProvider, signOut, useSession } from "next-auth/react";
 
 /** Client sign-out with redirect to the login page (use from onClick handlers). */
 export function signOutToLogin() {

@@ -1,7 +1,5 @@
 import { Metadata } from "next";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
-import { AuthError } from "next-auth";
 import { auth, signIn } from "@repo/auth";
 import { Button } from "@repo/design/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design/shadcn/card";
@@ -21,21 +19,17 @@ async function loginWithCredentials(formData: FormData) {
   const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  try {
-    await signIn("credentials", {
-      username,
-      password,
-      redirectTo: "/",
-    });
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-    if (error instanceof AuthError) {
-      return redirect("/login?error=CredentialsSignin");
-    }
-    throw error;
+  const result = await signIn("credentials", {
+    username,
+    password,
+    redirect: false,
+  });
+
+  if (result?.error) {
+    redirect("/login?error=CredentialsSignin");
   }
+
+  redirect("/");
 }
 
 async function loginWithGitHub() {
