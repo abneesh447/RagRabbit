@@ -1,6 +1,6 @@
 "use server";
 
-import { openai } from "@ai-sdk/openai";
+import { getChatLanguageModel } from "../../../../lib/get-chat-model";
 import EasyMarkdown from "@repo/design/components/chat/markdown";
 import { getRagContextChat } from "@repo/rag/answering/llamaindex";
 import { getMutableAIState, streamUI } from "ai/rsc";
@@ -23,7 +23,7 @@ export async function toolsAgent(input: string): Promise<ClientMessage> {
   history.update((messages: ServerMessage[]) => [...messages, { role: "user", content: input }]);
 
   const result = await streamUI({
-    model: openai("gpt-4o-mini"),
+    model: getChatLanguageModel(),
     messages: [...history.get()],
     system: systemPrompt,
 

@@ -1,4 +1,4 @@
-import { openai } from "@ai-sdk/openai";
+import { getChatLanguageModel } from "../../../../../lib/get-chat-model";
 import { UserError } from "@repo/core";
 import { Source } from "@repo/design/components/chat/source-box";
 import { getPrompt, getRagRetriever } from "@repo/rag/answering/llamaindex";
@@ -113,7 +113,7 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
       );
 
       const result = streamText({
-        model: openai("gpt-4o-mini"),
+        model: getChatLanguageModel(),
         system: getPrompt(),
         messages,
         // manual format for server-side messages since we allow branching from the frontend:

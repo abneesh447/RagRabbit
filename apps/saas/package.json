@@ -19,6 +19,7 @@
     "db:studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.0",
     "@ai-sdk/openai": "^1.2.1",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

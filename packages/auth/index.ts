@@ -34,29 +34,30 @@ const result: NextAuthResult = NextAuth({
     authenticatorsTable,
   }),
   ...authConfig,
+  trustHost: true,
+  pages: {
+    signIn: "/login",
+  },
   callbacks: {
     /** Extends the session.user object to keep also the id and organizationId values */
     session({ session, token }) {
       session.user.id = token.sub as string;
-      session.user.organizationId = token.orgId as number;
+      session.user.organizationId = (token.orgId as number | undefined) ?? 1;
       return session;
     },
 
     /** Extends the JWT token to keep also the orgId value */
     async jwt({ token, account, user }) {
-      if (account && user && "organizationId" in user) {
-        log.info({ user }, "New user registered");
-        if (!user.organizationId) {
-          const defaultOrg = await db.query.organizationsTable.findFirst();
-          if (defaultOrg) {
-            user.organizationId = defaultOrg.id;
-            await db.insert(usersTable).values({
-              where: { id: user.id },
-              data: { organizationId: defaultOrg.id },
-            });
-          }
+      if (user && "organizationId" in user && user.organizationId != null) {
+        token.orgId = user.organizationId as number;
+        if (account) {
+          log.info({ user }, "New user registered");
         }
-        token.orgId = user.organizationId;
+      } else if (account && user && !token.orgId) {
+        const defaultOrg = await db.query.organizationsTable.findFirst();
+        if (defaultOrg) {
+          token.orgId = defaultOrg.id;
+        }
       }
       return token;
     },
@@ -83,7 +84,7 @@ export async function authOrLogin(): Promise<Session> {
   log.info({ session }, "authOrLogin");
   if (!session || !session.user || !session.user.id) {
     log.info("Redirecting to signin");
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
   return session;
 }
