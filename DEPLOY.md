@@ -25,7 +25,9 @@ Migrations run on deploy via `vercel-build` (`pnpm db:migrate && next build`).
 
 | Variable | Notes |
 |----------|--------|
-| `OPENAI_API_KEY` | Embeddings + chat |
+| `OPENAI_API_KEY` | Required if `LLM_MODEL=openai` or `EMBEDDING_MODEL=openai` |
+| `ANTHROPIC_API_KEY` | Required if `LLM_MODEL=anthropic` (chat) |
+| `LLM_MODEL` | `anthropic` \| `openai` \| `groq` |
 | `AUTH_SECRET` | `npx auth secret` |
 | `AUTH_USERNAME` / `AUTH_PASSWORD` | Admin login (or use OAuth below) |
 | `POSTGRES_URL` / `POSTGRES_URL_NON_POOLING` | From Vercel Postgres |

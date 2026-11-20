@@ -1,7 +1,8 @@
 import { getChatLanguageModel } from "../../../../../lib/get-chat-model";
 import { UserError } from "@repo/core";
 import { Source } from "@repo/design/components/chat/source-box";
-import { getPrompt, getRagRetriever } from "@repo/rag/answering/llamaindex";
+import { getPrompt } from "@repo/rag/answering/prompt";
+import { getRagRetriever } from "@repo/rag/answering/llamaindex";
 import { Metadata, MetadataMode, NodeWithScore } from "@repo/rag/llamaindex.mjs";
 import { appendClientMessage, createDataStreamResponse, createIdGenerator, generateId, Message, streamText } from "ai";
 import { checkLimitsIp, checkLimitsUsage, loadMessages, ResponseMessage, saveMessages } from "./db";
@@ -10,61 +11,81 @@ export const maxDuration = 30;
 
 const SOURCES_RAG = 8;
 
-/** Handle new message whith rate and ip limits in parallel with promises and abort signals */
+/** Handle new message with rate and usage limits before streaming. */
 export async function POST(req: Request, res: Response) {
   const orgId = 1;
   const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip");
 
-  // Check limits and in parallel but abort the LLM request as soon as any fails:
-  const abortController = new AbortController();
   try {
-    const ipPromise = checkLimitsIp(orgId, ip);
-    const usagePromise = checkLimitsUsage(orgId);
-    const handleRequestPromise = handleRequest(ip, orgId, req, res, abortController.signal);
-
-    return await Promise.all([ipPromise, usagePromise, handleRequestPromise])
-      .catch((error) => {
-        // If any fails, abort the LLM request:
-        abortController.abort();
-        throw error;
-      })
-      .then((response) => {
-        return response[2];
-      });
+    await checkLimitsIp(orgId, ip);
+    await checkLimitsUsage(orgId);
+    return handleRequest(ip, orgId, req, res);
   } catch (e) {
     if (e instanceof UserError) {
       return new Response(e.message, { status: e.status });
     }
+    console.error("Chat POST failed", e);
     return new Response("Internal server error", { status: 500 });
   }
 }
 
-function handleAbort(signal: AbortSignal) {
-  if (signal?.aborted) {
-    throw new Error("Operation was aborted");
+function normalizeMessageContent(content: Message["content"]): string {
+  if (typeof content === "string") {
+    return content;
   }
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === "string") {
+          return part;
+        }
+        if ("text" in part && typeof part.text === "string") {
+          return part.text;
+        }
+        return "";
+      })
+      .join("");
+  }
+  return String(content ?? "");
 }
 
-async function handleRequest(ip: string, orgId: number, req: Request, res: Response, signal?: AbortSignal) {
-  // get the last message from the client:
-  const { message, id, userChatId }: { message: Message; id: string; userChatId: string } = await req.json();
-  message.content = message.content.slice(0, 1000); // limit the message to 1000 characters
+function parseUserChatId(userChatId: string): { userId: string; chatId: string } {
+  const separatorIndex = userChatId.indexOf("-");
+  if (separatorIndex === -1) {
+    return { userId: userChatId, chatId: "default" };
+  }
+  return {
+    userId: userChatId.slice(0, separatorIndex),
+    chatId: userChatId.slice(separatorIndex + 1),
+  };
+}
 
-  const [userId, chatId] = userChatId.split("-");
+async function handleRequest(ip: string, orgId: number, req: Request, res: Response) {
+  const { message: rawMessage, id, userChatId }: { message: Message; id: string; userChatId: string } =
+    await req.json();
 
-  // load the previous messages in parallel:
-  handleAbort(signal);
-  let messagesPromise = loadMessages(userId, chatId);
+  const message: Message = {
+    ...rawMessage,
+    content: normalizeMessageContent(rawMessage.content).slice(0, 1000),
+  };
+
+  const { userId, chatId } = parseUserChatId(userChatId);
+
+  const messagesPromise = loadMessages(userId, chatId);
 
   return createDataStreamResponse({
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : "Chat failed";
+      console.error("Chat stream error:", error);
+      return message;
+    },
     execute: async (dataStream) => {
-      handleAbort(signal);
       // Retrieve (embedding models can fail on serverless — still answer without RAG):
       let relevantSources: NodeWithScore<Metadata>[] = [];
       try {
         const retriever = await getRagRetriever();
         relevantSources = await retriever.retrieve({
-          query: message.content,
+          query: String(message.content),
         });
       } catch (retrieveError) {
         console.error("RAG retrieve failed", retrieveError);
@@ -73,22 +94,20 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
       // Format sources and context text:
       let { sources, content, suggestedPrompts } = processSources(relevantSources);
 
-      // Send to UI as a message annotation so that it shows immediately without waiting for the LLM response:
-      handleAbort(signal);
       const sourcesAnnotation = {
         type: "sources",
         data: sources,
       };
       dataStream.writeMessageAnnotation(sourcesAnnotation);
-      handleAbort(signal);
 
-      // Compose messages history (user/assistant only — RAG context goes in system prompt for Anthropic):
-      let messages = await messagesPromise;
+      let messages = (await messagesPromise).filter((m) => normalizeMessageContent(m.content).length > 0);
       const contextMessage = "Use the following documentation to answer the question";
       messages = messages.filter((m) => !String(m.content).startsWith(contextMessage));
 
       const ragContext =
-        content.length > 0 ? `${contextMessage}:\n\n${content.slice(0, SOURCES_RAG).join("\n")}` : contextMessage;
+        content.length > 0
+          ? `${contextMessage}:\n\n${content.slice(0, SOURCES_RAG).join("\n")}`
+          : `${contextMessage}:\n\n(No indexed documentation is available yet. Greet the user briefly and explain that indexing content will improve answers.)`;
 
       const assistantMessage: Message = {
         id: generateId(),
@@ -125,9 +144,6 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
           prefix: "msgs",
           size: 16,
         }),
-        // Allow aborting the request if the user closes the tab:
-        abortSignal: signal,
-
         async onFinish({ response, usage }) {
           // Add a few suggested questions:
           const suggestedPromptsAnnotation = {
