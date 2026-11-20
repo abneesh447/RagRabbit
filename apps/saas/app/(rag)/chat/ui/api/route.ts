@@ -59,11 +59,16 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
   return createDataStreamResponse({
     execute: async (dataStream) => {
       handleAbort(signal);
-      // Retrieve:
-      const retriever = await getRagRetriever();
-      const relevantSources = await retriever.retrieve({
-        query: message.content,
-      });
+      // Retrieve (embedding models can fail on serverless — still answer without RAG):
+      let relevantSources: NodeWithScore<Metadata>[] = [];
+      try {
+        const retriever = await getRagRetriever();
+        relevantSources = await retriever.retrieve({
+          query: message.content,
+        });
+      } catch (retrieveError) {
+        console.error("RAG retrieve failed", retrieveError);
+      }
 
       // Format sources and context text:
       let { sources, content, suggestedPrompts } = processSources(relevantSources);
@@ -77,21 +82,20 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
       dataStream.writeMessageAnnotation(sourcesAnnotation);
       handleAbort(signal);
 
-      // Compose messages history:
+      // Compose messages history (user/assistant only — RAG context goes in system prompt for Anthropic):
       let messages = await messagesPromise;
       const contextMessage = "Use the following documentation to answer the question";
-      // Skip the sources from previous RAG calls to save space:
-      messages = messages.filter((m) => !m.content.startsWith(contextMessage));
+      messages = messages.filter((m) => !String(m.content).startsWith(contextMessage));
 
-      // Add the new context to chat:
+      const ragContext =
+        content.length > 0 ? `${contextMessage}:\n\n${content.slice(0, SOURCES_RAG).join("\n")}` : contextMessage;
+
       const assistantMessage: Message = {
         id: generateId(),
         role: "assistant",
-        content: contextMessage + ": \n" + content.slice(0, SOURCES_RAG).join("\n"),
+        content: ragContext,
       };
-      messages = [...messages, assistantMessage];
 
-      // append the new user message:
       messages = appendClientMessage({
         messages,
         message,
@@ -114,7 +118,7 @@ async function handleRequest(ip: string, orgId: number, req: Request, res: Respo
 
       const result = streamText({
         model: getChatLanguageModel(),
-        system: getPrompt(),
+        system: `${getPrompt()}\n\n${ragContext}`,
         messages,
         // manual format for server-side messages since we allow branching from the frontend:
         experimental_generateMessageId: createIdGenerator({

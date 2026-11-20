@@ -3,6 +3,7 @@
 import { CircleUser, Menu, Package2, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession, signOut as nextAuthSignOut } from "next-auth/react";
 
 import { Button } from "@repo/design/shadcn/button";
 import {
@@ -20,8 +21,15 @@ import Script from "next/script";
 import Image from "next/image";
 import { RagRabbitSearch } from "./ragrabbit-search";
 
-export function DashboardHeader({ signOut }: { signOut: () => void | Promise<void> }) {
+export function DashboardHeader({ signOut }: { signOut?: () => void | Promise<void> }) {
   const router = useRouter();
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  function handleSignOut() {
+    const signOutAction = signOut ?? (() => nextAuthSignOut({ redirectTo: "/login" }));
+    void signOutAction();
+  }
 
   return (
     <header className="sticky z-50 top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -45,11 +53,19 @@ export function DashboardHeader({ signOut }: { signOut: () => void | Promise<voi
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{isAuthenticated ? "My Account" : "Account"}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/user/profile")}>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => void signOut()}>Logout</DropdownMenuItem>
+            {isAuthenticated ? (
+              <>
+                <DropdownMenuItem onClick={() => router.push("/user/profile")}>Settings</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>Logout</DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem asChild>
+                <Link href="/login">Sign in</Link>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

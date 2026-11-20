@@ -18,7 +18,7 @@ export async function loadMessages(chatId: string, userId: string): Promise<Mess
     },
   });
 
-  return chat?.[0]?.messages || [];
+  return chat?.messages ?? [];
 }
 
 export async function saveMessages(
@@ -172,7 +172,11 @@ export async function checkLimitsUsage(organizationId: number): Promise<boolean>
     where: eq(widgetConfigTable.organizationId, organizationId),
   });
 
-  const maxTokens = widgetConfig?.maxTokens * 1_000_000;
+  if (!widgetConfig?.maxTokens) {
+    return true;
+  }
+
+  const maxTokens = widgetConfig.maxTokens * 1_000_000;
   const inputOutputCostRatio = 4;
   const currentTokens =
     widgetConfig?.currentPeriodInputTokens / inputOutputCostRatio + widgetConfig?.currentPeriodOutputTokens;

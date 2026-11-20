@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Ellipsis, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useSession, signOut as nextAuthSignOut } from "next-auth/react";
 
 import { cn } from "@repo/design/lib/utils";
 import { Button } from "@repo/design/shadcn/button";
@@ -19,6 +20,13 @@ interface MenuProps {
 export function Menu({ isOpen, signOut }: MenuProps) {
   const pathname = usePathname();
   const { sidebarMenu } = useConfig();
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  function handleSignOut() {
+    const signOutAction = signOut ?? (() => nextAuthSignOut({ redirectTo: "/login" }));
+    void signOutAction();
+  }
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -96,16 +104,22 @@ export function Menu({ isOpen, signOut }: MenuProps) {
             <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
-                  <Button onClick={() => void signOut()} variant="outline" className="w-full justify-center h-10 mt-5">
-                    <span className={cn(isOpen === false ? "" : "mr-4")}>
-                      <LogOut size={18} />
-                    </span>
-                    <p className={cn("whitespace-nowrap", isOpen === false ? "opacity-0 hidden" : "opacity-100")}>
-                      Sign out
-                    </p>
-                  </Button>
+                  {isAuthenticated ? (
+                    <Button onClick={handleSignOut} variant="outline" className="w-full justify-center h-10 mt-5">
+                      <span className={cn(isOpen === false ? "" : "mr-4")}>
+                        <LogOut size={18} />
+                      </span>
+                      <p className={cn("whitespace-nowrap", isOpen === false ? "opacity-0 hidden" : "opacity-100")}>
+                        Sign out
+                      </p>
+                    </Button>
+                  ) : (
+                    <Button asChild variant="outline" className="w-full justify-center h-10 mt-5">
+                      <Link href="/login">Sign in</Link>
+                    </Button>
+                  )}
                 </TooltipTrigger>
-                {isOpen === false && <TooltipContent side="right">Sign out</TooltipContent>}
+                {isOpen === false && isAuthenticated && <TooltipContent side="right">Sign out</TooltipContent>}
               </Tooltip>
             </TooltipProvider>
           </li>
