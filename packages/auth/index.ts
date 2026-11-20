@@ -48,6 +48,9 @@ const result: NextAuthResult = NextAuth({
 
     /** Extends the JWT token to keep also the orgId value */
     async jwt({ token, account, user }) {
+      if (user?.id) {
+        token.sub = user.id;
+      }
       if (user && "organizationId" in user && user.organizationId != null) {
         token.orgId = user.organizationId as number;
         if (account) {

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { auth, signIn } from "@repo/auth";
@@ -6,6 +7,8 @@ import { Button } from "@repo/design/shadcn/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design/shadcn/card";
 import { Input } from "@repo/design/shadcn/input";
 import { Label } from "@repo/design/shadcn/label";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 async function loginWithCredentials(formData: FormData) {
   "use server";
 
-  const username = String(formData.get("username") ?? "");
+  const username = String(formData.get("username") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   try {
@@ -25,6 +28,9 @@ async function loginWithCredentials(formData: FormData) {
       redirectTo: "/",
     });
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
     if (error instanceof AuthError) {
       return redirect("/login?error=CredentialsSignin");
     }

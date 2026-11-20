@@ -1,3 +1,5 @@
+"use client";
+
 import { CircleUser, Menu, Package2, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,7 +20,7 @@ import Script from "next/script";
 import Image from "next/image";
 import { RagRabbitSearch } from "./ragrabbit-search";
 
-export function DashboardHeader({ signOut }: { signOut: () => Promise<void> }) {
+export function DashboardHeader({ signOut }: { signOut: () => void | Promise<void> }) {
   const router = useRouter();
 
   return (
@@ -47,7 +49,7 @@ export function DashboardHeader({ signOut }: { signOut: () => Promise<void> }) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/user/profile")}>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void signOut()}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

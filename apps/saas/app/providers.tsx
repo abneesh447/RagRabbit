@@ -1,5 +1,6 @@
 "use client";
 import type * as React from "react";
+import { SessionProvider } from "@repo/auth/react";
 import { Toaster } from "@repo/design/shadcn/toaster";
 import { SWRConfig } from "swr";
 import { ConfigProvider } from "@repo/design/components/providers/config-provider";
@@ -7,6 +8,7 @@ import { sidebarMenu, headerMenu } from "../settings/menu";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
+    <SessionProvider>
     <ConfigProvider
       value={{
         sidebarMenu,
@@ -28,5 +30,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       </SWRConfig>
       <Toaster />
     </ConfigProvider>
+    </SessionProvider>
   );
 }

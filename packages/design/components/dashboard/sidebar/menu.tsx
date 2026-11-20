@@ -96,7 +96,7 @@ export function Menu({ isOpen, signOut }: MenuProps) {
             <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
-                  <Button onClick={() => signOut()} variant="outline" className="w-full justify-center h-10 mt-5">
+                  <Button onClick={() => void signOut()} variant="outline" className="w-full justify-center h-10 mt-5">
                     <span className={cn(isOpen === false ? "" : "mr-4")}>
                       <LogOut size={18} />
                     </span>

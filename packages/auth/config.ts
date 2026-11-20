@@ -60,7 +60,9 @@ if (env.AUTH_USERNAME && env.AUTH_PASSWORD) {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (credentials.username === env.AUTH_USERNAME && credentials.password === env.AUTH_PASSWORD) {
+        const username = String(credentials?.username ?? "").trim();
+        const password = String(credentials?.password ?? "");
+        if (username === env.AUTH_USERNAME && password === env.AUTH_PASSWORD) {
           return {
             id: "11111111-1111-1111-1111-111111111111",
             name: env.AUTH_USERNAME,

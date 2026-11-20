@@ -1,10 +1,11 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+/** Env flags are enabled only when explicitly set to "true". */
 const bool = z
   .string()
   .optional()
-  .transform((s) => s !== "false");
+  .transform((s) => s === "true");
 const required = z.string().min(1);
 const optional = z
   .string()

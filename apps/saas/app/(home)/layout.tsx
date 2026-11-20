@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from "@repo/design/components/dashboard/layout";
 import { useSelectedLayoutSegments } from "next/navigation";
-import { signOut } from "@repo/auth/react";
+import { signOutToLogin } from "@repo/auth/react";
 import { DashboardHeader } from "@repo/design/components/dashboard/header";
 
 export default function Layout({ children }) {
@@ -10,7 +10,7 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <DashboardHeader signOut={signOut} />
+      <DashboardHeader signOut={signOutToLogin} />
       {children}
     </>
   );
