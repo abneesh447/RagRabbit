@@ -2,10 +2,10 @@ import { Metadata } from "next";
 import { authOrLogin } from "@repo/auth";
 import { Card, CardContent } from "@repo/design/shadcn/card";
 import { Database, Type, Hash, Calendar } from "@repo/design/base/icons";
-import { headers } from "next/headers";
 import { ResetCacheButton } from "./components/reset-cache-button";
 import { getLlmStats, getLlmsConfigAction } from "./actions";
 import { LlmPageContent } from "./components/llm-page-content";
+import { getBaseUrl } from "../../../../lib/get-base-url";
 
 export const metadata: Metadata = {
   title: "LLMs.txt",
@@ -22,13 +22,6 @@ function formatBytes(bytes: number) {
 
 function formatNumber(num: number) {
   return new Intl.NumberFormat().format(num);
-}
-
-async function getBaseUrl() {
-  const headersList = await headers();
-  const host = headersList.get("host") || "";
-  const protocol = host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https";
-  return `${protocol}://${host}`;
 }
 
 export default async function LlmPage() {

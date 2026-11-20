@@ -7,6 +7,7 @@ import { Button } from "@repo/design/shadcn/button";
 import { MessageSquareIcon } from "@repo/design/base/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/design/shadcn/tabs";
 import Script from "next/script";
+import { getBaseUrl } from "../../../../lib/get-base-url";
 
 export const metadata: Metadata = {
   title: "Widget Configuration",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 
 export default async function WidgetPage() {
   const session = await authOrLogin();
+  const baseUrl = await getBaseUrl();
 
   let defaultValues = {};
 
@@ -71,7 +73,7 @@ export default async function WidgetPage() {
                   <h2>Chat Widget</h2>
                   <p>To add the chat widget to your website, add this script tag to your HTML:</p>
                   <pre className="bg-gray-100 p-4 rounded-lg text-black">
-                    <code>{`<script src="https://ragrabbit.com/widget.js"></script>`}</code>
+                    <code>{`<script src="${baseUrl}/widget.js"></script>`}</code>
                   </pre>
                   <p className="mt-4">
                     You should see the chat widget button in the bottom-right corner of this page. Click it to test the
@@ -82,7 +84,7 @@ export default async function WidgetPage() {
                   <p>To add a search widget to your website:</p>
                   <p>1. First, add the search widget script:</p>
                   <pre className="bg-gray-100 p-4 rounded-lg text-black">
-                    <code>{`<script src="https://ragrabbit.com/widget.js?type=search"></script>`}</code>
+                    <code>{`<script src="${baseUrl}/widget.js?type=search"></script>`}</code>
                   </pre>
                   <p>2. Mount the search widget:</p>
                   <pre className="bg-gray-100 p-4 rounded-lg text-black">
@@ -122,7 +124,7 @@ export function RagRabbitSearch() {
                   </p>
                   <h4>buttonText</h4>
                   <pre className="bg-gray-100 p-4 rounded-lg text-black">
-                    <code>{`<script src="https://ragrabbit.com/widget.js?buttonText=Ask%20AI"></script>`}</code>
+                    <code>{`<script src="${baseUrl}/widget.js?buttonText=Ask%20AI"></script>`}</code>
                   </pre>
 
                   <h3>Search widget</h3>

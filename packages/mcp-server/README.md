@@ -41,7 +41,7 @@ npx @ragrabbit/mcp", "http://<RagRabbit install>/", "<name of your documentation
 
 Arguments:
 
-- `ragrabbit-url`: (Required) The base URL of your RagRabbit instance, eg https://my-ragrabbit.vercel.com/
+- `ragrabbit-url`: (Required) The base URL of your RagRabbit instance, e.g. `https://<your-app>.vercel.app/`
 - `name`: (Required) Custom name for the documentation search service (defaults to "RagRabbit") so that AI will know to use it when looking for info
 
 ## Exposed Tools by this MCP

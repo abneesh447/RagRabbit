@@ -19,7 +19,7 @@ export default async function ChatPage() {
         </div>
       </div>
       <div className="absolute float-right bottom-3 right-0 text-right text-sm text-muted-foreground pr-8">
-        <a href="https://ragrabbit.com" target="_blank" className="flex items-center gap-1">
+        <a href="/" target="_blank" className="flex items-center gap-1">
           <Image src="/logo_small.svg" alt="RagRabbit" width={0} height={0} className="inline-block w-5 h-5" />
           <span className="text-accent-foreground font-bold">RagRabbit</span>
         </a>

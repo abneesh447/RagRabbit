@@ -1,0 +1,4 @@
+{
+  "installCommand": "cd ../.. && corepack enable && pnpm install",
+  "buildCommand": "pnpm vercel-build"
+}

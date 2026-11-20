@@ -3,6 +3,7 @@ import { authOrLogin } from "@repo/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design/shadcn/card";
 import { Button } from "@repo/design/shadcn/button";
 import { ExternalLinkIcon, TerminalIcon } from "@repo/design/base/icons";
+import { getBaseUrl } from "../../../../lib/get-base-url";
 
 export const metadata: Metadata = {
   title: "MCP Integration Guide",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 
 export default async function McpIntegrationPage() {
   const session = await authOrLogin();
+  const baseUrl = await getBaseUrl();
 
   return (
     <>
@@ -57,7 +59,7 @@ export default async function McpIntegrationPage() {
   "mcpServers": {
     "<name_of_your_documentation_no_spaces>": {
       "command": "npx",
-      "args": ["@ragrabbit/mcp", "http://<RagRabbit install>/", "<name of your documentation>"]
+      "args": ["@ragrabbit/mcp", "${baseUrl}/", "<name of your documentation>"]
     }
   }
 }`}</code>
@@ -69,14 +71,14 @@ export default async function McpIntegrationPage() {
                 And add a new MCP of type <code>command</code> with the command:
               </p>
               <pre className="bg-gray-100 p-4 rounded-lg text-black">
-                <code>{`npx @ragrabbit/mcp", "http://<RagRabbit install>/", "<name of your documentation>"`}</code>
+                <code>{`npx @ragrabbit/mcp ${baseUrl}/ "<name of your documentation>"`}</code>
               </pre>
 
               <h3 className="mt-4">Arguments</h3>
               <ul>
                 <li>
-                  <code>ragrabbit-url</code>: (Required) The base URL of your RagRabbit instance, eg
-                  https://my-ragrabbit.vercel.com/
+                  <code>ragrabbit-url</code>: (Required) The base URL of your RagRabbit instance, e.g.{" "}
+                  <code>{`${baseUrl}/`}</code>
                 </li>
                 <li>
                   <code>name</code>: (Required) Custom name for the documentation search service (defaults to

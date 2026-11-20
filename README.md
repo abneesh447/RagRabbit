@@ -1,10 +1,10 @@
 <h1 style="font-weight:normal">
-  <a href="https://ragrabbit.com">
+  <a href="https://github.com/abneesh447/RagRabbit">
     <img src="./apps/saas/public/logo.svg" alt="RagRabbit" width=35>
   </a>
   &nbsp;RagRabbit&nbsp;
-  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&demo-title=RagRabbit%20-%20AI%20Site%20Search%20and%20LLM.txt&demo-description=Site%20AI%20Search%20and%20LLM.txt%20in%20Minutes%2C%20Open%20Source%20with%201%20Click%20Deploy%20on%20Vercel.&demo-url=https%3A%2F%2Fragrabbit.vercel.app%2F&demo-image=https%3A%2F%2Fragrabbit.vercel.app%2Fopengraph-image.png&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas"><img src="https://img.shields.io/badge/deploy%20on-vercel-black.svg"></a>
-  <a href="https://github.com/abneesh447/RagRabbit/blob/master/license.md"><img src=https://img.shields.io/github/license/abneesh447/RagRabbit.svg?colorB=ff0000></a>
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas"><img src="https://img.shields.io/badge/deploy%20on-vercel-black.svg"></a>
+  <a href="https://github.com/abneesh447/RagRabbit/blob/main/LICENSE"><img src=https://img.shields.io/github/license/abneesh447/RagRabbit.svg?colorB=ff0000></a>
   <a href="https://www.npmjs.com/package/@ragrabbit/mcp"><img src="https://img.shields.io/npm/d18m/%40ragrabbit%2Fmcp?label=npm" /></a>
   <img src="https://img.shields.io/github/stars/abneesh447/RagRabbit" />
 </h1>
@@ -17,7 +17,7 @@ Self Hosted Site AI Search, LLMs.txt, MCP Server that crawls your content. 1-Cli
 ![RagRabbit](./apps/docs/public/cover.jpg)
 </p>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&demo-title=RagRabbit%20-%20AI%20Site%20Search%20and%20LLM.txt&demo-description=Site%20AI%20Search%20and%20LLM.txt%20in%20Minutes%2C%20Open%20Source%20with%201%20Click%20Deploy%20on%20Vercel.&demo-url=https%3A%2F%2Fragrabbit.vercel.app%2F&demo-image=https%3A%2F%2Fragrabbit.vercel.app%2Fopengraph-image.png&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas)
 
 ## How it works
 
@@ -38,15 +38,19 @@ Integrations:
 
 ### Demo
 
-View [RagRabbit Demo Page](https://ragrabbit.vercel.app/widget/demo)
+Run the app locally ([`pnpm dev`](./DEPLOY.md#5-local-development)), then open [http://localhost:3000/widget/demo](http://localhost:3000/widget/demo).
+
+Live demo: [https://ragrabbit-ashen.vercel.app/widget/demo](https://ragrabbit-ashen.vercel.app/widget/demo) (see [DEPLOY.md](./DEPLOY.md) to run your own).
 
 ![RagRabbit Demo](./apps/docs/public/ragrabbit.gif)
 
 ## Install
 
+Step-by-step production setup: **[DEPLOY.md](./DEPLOY.md)**.
+
 To install on Vercel:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&demo-title=RagRabbit%20-%20AI%20Site%20Search%20and%20LLM.txt&demo-description=Site%20AI%20Search%20and%20LLM.txt%20in%20Minutes%2C%20Open%20Source%20with%201%20Click%20Deploy%20on%20Vercel.&demo-url=https%3A%2F%2Fragrabbit.vercel.app%2F&demo-image=https%3A%2F%2Fragrabbit.vercel.app%2Fopengraph-image.png&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fabneesh447%2FRagRabbit&env=OPENAI_API_KEY,AUTH_USERNAME,AUTH_PASSWORD,AUTH_SECRET&envDescription=Get%20an%20OpenAI%20Api%20Key%20and%20set%20AUTH_USERNAME%20and%20AUTH_PASSWORD%20to%20the%20desired%20credentials%20to%20secure%20the%20admin%20section.%20Also%20be%20sure%20to%20enable%20the%20Postgres%20database%20integration&envLink=https%3A%2F%2Fplatform.openai.com%2Fapi-keys&stores=%5B%7B%22type%22%3A%22postgres%22%7D%5D&root-directory=apps/saas)
 
 Requirements:
 
@@ -108,7 +112,7 @@ Insert a search input anwhere in your page:
 ![RagRabbit Widget](./apps/docs/public/ragrabbit_search_field.png)
 
 ```
-<script src="https://ragrabbit.com/widget.js?type=search"></script>
+<script src="https://<your-app>/widget.js?type=search"></script>
 <ragrabbit-search></ragrabbit-search>
 ```
 
@@ -165,12 +169,12 @@ Go to Cursor -> Settings -> Cursor Settings -> MCP
 And add a new MCP of type `command` with the command:
 
 ```
-npx @ragrabbit/mcp", "http://<RagRabbit install>/", "<name of your documentation>"
+npx @ragrabbit/mcp https://<your-app>/ "<name of your documentation>"
 ```
 
 Arguments:
 
-- `ragrabbit-url`: (Required) The base URL of your RagRabbit instance, eg https://my-ragrabbit.vercel.com/
+- `ragrabbit-url`: (Required) The base URL of your RagRabbit instance, e.g. `https://<your-app>.vercel.app/`
 - `name`: (Required) Custom name for the documentation search service (defaults to "RagRabbit") so that AI will know to use it when looking for info
 
 ## Configuration Options
@@ -182,7 +186,7 @@ You can configure the chat button by adding the following parameters to the widg
 #### buttonText
 
 ```
-<script src="https://ragrabbit.com/widget.js?buttonText=Ask%20AI"></script>
+<script src="https://<your-app>/widget.js?buttonText=Ask%20AI"></script>
 ```
 
 ### Search widget
